@@ -18,9 +18,7 @@ public:
         current_position.z = z;
     }
     Position current_position{}; // current position
-    Position position_change{};  // How many steps per time unit
-
-    int orbital_period{};  // How many time steps it takes to planet make a one round 
+    Position velocity{};
 };
 
 #endif

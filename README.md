@@ -23,8 +23,6 @@ Combine the result to get total period
 
 This is absolutely not a trivial task, so feel free to ask for help if you feel like you get stuck.  And don't worry if you don't get it fully done.
 
-(Hint: The correct solution is 41065920 time units, it takes my laptop and implementation around 370 milliseconds to calculate this with unoptimized build.)
-
 # Build Project
 
 1. Navigate to the project root directory
@@ -46,5 +44,5 @@ make
 # Run Project
 
 ```shell 
-./ProjectName
+./Planets
 ```

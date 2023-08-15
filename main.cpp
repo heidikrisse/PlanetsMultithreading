@@ -3,6 +3,7 @@
 #include "include/position_comparison.h"
 
 #include <iostream>
+#include <numeric>
 #include <vector>
 #include <thread>
 #include <future>
@@ -18,47 +19,23 @@ int main()
 
     std::vector<Planet> planets = {planet1, planet2, planet3, planet4, planet5};
 
-    std::vector<std::future<void>> results;
+    // A thread for each axis to count the time steps passed before the planets are in their starting position
+    std::future<int> future_x = std::async(std::launch::async, calculate_orbital_period_x, std::ref(planets));
 
-    int time_units{0};
+    std::future<int> future_y = std::async(std::launch::async, calculate_orbital_period_y, std::ref(planets));
 
-    while (true)
-    {
-        results.clear();
+    std::future<int> future_z = std::async(std::launch::async, calculate_orbital_period_z, std::ref(planets));
 
-        for (size_t i{0}; i < planets.size(); ++i)
-        {
-            for (size_t j{i + 1}; j < planets.size(); ++j)
-            {
-                results.emplace_back(std::async(std::launch::async, update_positions, std::ref(planets[i]), std::ref(planets[j])));
-            }
-        }
+    // We get the orbital periods for axis x, y and z until all threads are in their starting positions
+    int period_x{future_x.get()};
+    int period_y{future_y.get()};
+    int period_z{future_z.get()};
 
-        for (auto &result : results)
-        {
-            result.get();
-        }
+    // Calculate least common factor for an orbital period
+    int lcm_xy{std::lcm(period_x, period_y)};
+    int result{std::lcm(lcm_xy, period_z)};
 
-        time_units++;
-
-        bool all_planets_back_to_starting_position{true};
-
-        for (const auto &planet : planets)
-        {
-            if (planet.position_change.x != 0 || planet.position_change.y != 0 || planet.position_change.z != 0)
-            {
-                all_planets_back_to_starting_position = false;
-                break;
-            }
-        }
-
-        if (all_planets_back_to_starting_position)
-        {
-            break;
-        }
-    }
-
-    std::cout << time_units << '\n';
+    std::cout << "Time period all planets are back to their starting positions: " << result << '\n';
 
     return 0;
 }
