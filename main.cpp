@@ -6,10 +6,17 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <functional>
 
 int main()
 {
-    std::vector<Planet> planets{{0, 5, 2}, {-10, 7, -94}, {6042, 4, 8}, {-42, 55, 92}, {0, -54189072, 0}};
+    Planet planet1{0, 5, 2};
+    Planet planet2{-10, 7, -94};
+    Planet planet3{6042, 4, 8};
+    Planet planet4{-42, 55, 92};
+    Planet planet5{0, -54189072, 0};
+
+    std::vector<Planet> planets = {planet1, planet2, planet3, planet4, planet5};
 
     std::vector<std::future<void>> results;
 
@@ -23,7 +30,7 @@ int main()
         {
             for (size_t j{i + 1}; j < planets.size(); ++j)
             {
-                results.emplace_back(std::launch::async, update_positions, std::ref(planets[i]), std::ref(planets[j]));
+                results.emplace_back(std::async(std::launch::async, update_positions, std::ref(planets[i]), std::ref(planets[j])));
             }
         }
 
